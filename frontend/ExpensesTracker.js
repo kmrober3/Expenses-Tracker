@@ -6,31 +6,52 @@ class ExpensesTracker {
 
     addValues(expenses) {
         this.information.push(expenses);  
-        let divAE = document.getElementById("activeExpenses");
+        let divAE = document.getElementById("activeExpenses"); 
+        let h1TC = document.getElementById("Total Cost");
         divAE.innerHTML = "";
         this.information.forEach(t => { 
             let category = document.createElement("li"); 
-            category.textContent = t[0];
+            category.textContent = t[0] + " "; 
+            category.style.display = "inline-block"; 
+            //category.style.marginRight = "10px";
             let description = document.createElement("li"); 
-            description.textContent = t[1];
+            description.textContent = t[1]; 
+            description.style.display = "inline-block"; 
+            description.style.marginRight = "10px";
             let amount = document.createElement("li"); 
-            amount.textContent = t[2]; 
-            let ul =  document.createElement("ul"); 
+            amount.textContent = t[2];  
+            amount.style.display = "inline-block"; 
+            amount.style.marginRight = "10px";
+            //let ul =  document.createElement("ul"); 
             let input = document.createElement("input");
             input.type = "checkbox";
-            input.id = description; 
+            input.id = description;  
+            this.totalBalance += Number.parseInt(t[2]);   
+            let totalBalanceUSD = document.createElement("li");
+            totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
+            let tcClone = this.formatedAmount(this.totalBalance);
+            totalBalanceUSD.style.display = "inline-block";
+            totalBalanceUSD.style.marginRight = "10px";
             category.appendChild(description);
-            category.appendChild(amount); 
-            category.appendChild(input);
+            category.appendChild(totalBalanceUSD); 
+            category.appendChild(input); 
+            console.log(category);
             //ul.appendChild(category);
             //ul.appendChild(description); 
             //ul.appendChild(amount);   
-            //ul.appendChild(input); 
-            divAE.append(category);
-
+            //ul.appendChild(input);  
+            //console.log(this.totalBalance); 
+            divAE.append(category);  
+            h1TC.append(tcClone);
         })
-        //ToDo
-    }  
+    }   
+
+    formatedAmount(num) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(num);
+    }
 
 }  
 
