@@ -1,60 +1,100 @@
 class ExpensesTracker { 
     constructor () {
         this.information = []; 
-        this.totalBalance = 0; 
+        this.totalBalance = 0;  
+        this.currCount = 0;
     }  
 
-    addValues(expenses) {
-        this.information.push(expenses);  
+    addValues(expenses) { 
         let divAE = document.getElementById("activeExpenses"); 
         let h1TC = document.getElementById("Total Cost");
         divAE.innerHTML = ""; 
-        h1TC.innerHTML = ""; 
+        h1TC.innerHTML = "";    
+        this.information.push(expenses); 
+        let max = this.information.length;  
+        console.log(max);
         this.totalBalance = 0; 
-        let max = this.information.length;
         let count = 0;
-        this.information.forEach(t => { 
+        this.information.forEach(t => {  
+            // Create list items 
+            let today = new Date(); 
+            let day = this.formatDay(today.getDay());
+            let month = this.formatMonth(today.getMonth() + 1);
+            let year = today.getFullYear();  
+            const formatDate = `${day}/${month}/${year}` 
+
+            let date = document.createElement("li");
+            date.textContent = formatDate + " "; 
+            //date.style.marginRight = "10px";
+
             let category = document.createElement("li"); 
-            category.textContent = t[0] + " "; 
+            category.textContent = t[0] + " ";    
             category.style.display = "inline-block"; 
+            category.style.marginRight = "10px";
+
             let description = document.createElement("li"); 
             description.textContent = t[1]; 
             description.style.display = "inline-block"; 
-            description.style.marginRight = "10px";
+            description.style.marginRight = "10px"; 
+
             let amount = document.createElement("li"); 
-            amount.textContent = t[2];  
+            amount.textContent = this.formatedAmount(Number.parseFloat(t[2]));  
             amount.style.display = "inline-block"; 
-            amount.style.marginRight = "10px";
+            amount.style.marginRight = "10px";  
+
+            // Create checkbox
             let input = document.createElement("input");
             input.type = "checkbox";
-            input.id = description;  
+            input.id = description;   
+
+            //  Update balance 
             this.totalBalance += Number.parseFloat(t[2]);    
             let totalBalanceUSD = document.createElement("li");
             totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
-            let tcClone = this.formatedAmount(this.totalBalance);
             totalBalanceUSD.style.display = "inline-block";
-            totalBalanceUSD.style.marginRight = "10px";
-            category.appendChild(description);
-            category.appendChild(totalBalanceUSD); 
-            category.appendChild(input); 
-            console.log(category); 
-            divAE.append(category);   
-            count++; 
-            if (count == max) { 
+            totalBalanceUSD.style.marginRight = "10px";  
+
+            let tcClone = this.formatedAmount(this.totalBalance); 
+
+            // Build Structure
+            date.appendChild(category);
+            date.appendChild(amount);
+            date.appendChild(input);
+
+            divAE.append(date);   
+            count++;    
+
+            // Add to header when max reached
+            if (count == max && this.currCount > 0) { 
                 h1TC.append(tcClone);
+            }
+
+            if(this.currCount == 0) { 
+                h1TC.append(tcClone); 
+                this.currCount++;
             }
         })
     }    
-
-
-
-
 
     formatedAmount(num) {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD'
         }).format(num);
+    }  
+
+    formatMonth(month) {
+        if (month < 10) {
+            month = '0' + month;
+        }  
+        return month;
+    } 
+
+    formatDay(day) {
+        if (day < '10') {
+            day = 0 + day;
+        } 
+        return day;
     }
 
 }  
@@ -64,14 +104,8 @@ let instance = new ExpensesTracker();
 document.getElementById("addExpense").addEventListener("click", (event) => {
     let arr = []; 
     let category = document.getElementById("category").value;  
-    console.log(category);
     let description = document.getElementById("description").value; 
-    console.log(description);
     let amount = document.getElementById("amount").value;  
-    console.log(amount);
-    arr.push(category);
-    arr.push(description);
-    arr.push(amount);  
-    console.log(arr);
+    arr.push(category, description, amount);
     instance.addValues(arr);
 })
