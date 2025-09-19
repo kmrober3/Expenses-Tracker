@@ -14,34 +14,28 @@ class ExpensesTracker {
         h1TC.innerHTML = "";    
         this.information.push(expenses); 
         let max = this.information.length;  
-        console.log(max);
+        //console.log(this.information);
         this.totalBalance = 0; 
         let count = 0; 
         //this.ls.clear();
         this.information.forEach(t => {  
             // Create list items 
-            let today = new Date(); 
-            let day = this.formatDay(today.getDay());
-            let month = this.formatMonth(today.getMonth() + 1);
-            let year = today.getFullYear();  
-            const formatDate = `${day}/${month}/${year}` 
-
             let date = document.createElement("li");
-            date.textContent = formatDate + " "; 
+            date.textContent = t[0] + " "; 
             //date.style.marginRight = "10px";
 
             let category = document.createElement("li"); 
-            category.textContent = t[0] + " ";    
+            category.textContent = t[1] + " ";    
             category.style.display = "inline-block"; 
             category.style.marginRight = "10px";
 
             let description = document.createElement("li"); 
-            description.textContent = t[1]; 
+            description.textContent = t[2]; 
             description.style.display = "inline-block"; 
             description.style.marginRight = "10px"; 
 
             let amount = document.createElement("li"); 
-            amount.textContent = this.formatedAmount(Number.parseFloat(t[2]));  
+            amount.textContent = this.formatedAmount(Number.parseFloat(t[3]));  
             amount.style.display = "inline-block"; 
             amount.style.marginRight = "10px";  
 
@@ -51,7 +45,7 @@ class ExpensesTracker {
             input.id = description;   
 
             //  Update balance 
-            this.totalBalance += Number.parseFloat(t[2]);    
+            this.totalBalance += Number.parseFloat(t[3]);    
             let totalBalanceUSD = document.createElement("li");
             totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
             totalBalanceUSD.style.display = "inline-block";
@@ -59,12 +53,13 @@ class ExpensesTracker {
 
             // Create local storage data
             let lsArray = [];
-            lsArray.push(formatDate, t[0], t[1], t[2]);
+            lsArray.push(t[0], t[1], t[2], t[3]);
 
             let tcClone = this.formatedAmount(this.totalBalance); 
 
             // Build Structure
-            date.appendChild(category);
+            date.appendChild(category); 
+            date.appendChild(description);
             date.appendChild(amount);
             date.appendChild(input);
 
@@ -74,10 +69,11 @@ class ExpensesTracker {
             
             // Update local storage
             this.ls.setItem(JSON.stringify(lsArray), "in progress");    
-            console.log(this.ls);
+            //console.log(this.ls);
 
             // Add to header when max reached
-            if (count == max && this.currCount > 0) { 
+            if (count == max && this.currCount > 0) {  
+                h1TC.innerHTML = "";
                 h1TC.append(tcClone);
             }
 
@@ -93,7 +89,7 @@ class ExpensesTracker {
         let h1TC = document.getElementById("Total Cost");
         divAE.innerHTML = ""; 
         h1TC.innerHTML = "";   
-        let max = this.information.length;   
+        let max = this.ls.length;   
         this.totalBalance = 0;  
         for (let i = 0; i < this.ls.length; i++) {   
             let rawKey = this.ls.key(i);
@@ -110,7 +106,8 @@ class ExpensesTracker {
             category.style.marginRight = "10px"; 
 
             let description = document.createElement("li"); 
-            description.textContent = key[2]; 
+            description.textContent = key[2];  
+            //console.log(key[2]);
             description.style.display = "inline-block"; 
             description.style.marginRight = "10px";  
 
@@ -141,23 +138,27 @@ class ExpensesTracker {
             this.information.push(actuallsArray);
 
             // Build Structure
-            date.appendChild(category);
+            date.appendChild(category); 
+            date.appendChild(description);
             date.appendChild(amount);
             date.appendChild(input); 
 
             divAE.append(date);    
 
             // Add to header when max reached
-            if (i == max - 1 && this.reloadCount > 0) { 
-                h1TC.textContent = tcClone;
+            if (i == max - 1 && this.reloadCount > 0) {  
+                console.log("Why am i here"); 
+                h1TC.innerHTML = "";
+                h1TC.append(tcClone);
             }
 
-            if(this.currCount == 0) { 
+            if(this.reloadCount == 0) {  
+                console.log("HI: " + tcClone);
                 h1TC.append(tcClone); 
                 this.reloadCount++;
             } 
         } 
-        console.log(this.ls);
+        //console.log(this.ls);
     }
 
     formatedAmount(num) {
@@ -192,16 +193,35 @@ document.getElementById("addExpense").addEventListener("click", (event) => {
     let arr = []; 
     let category = document.getElementById("category").value;  
     let description = document.getElementById("description").value; 
-    let amount = document.getElementById("amount").value;  
-    arr.push(category, description, amount);
+    let amount = document.getElementById("amount").value;    
+    // Get and format date
+    let today = new Date(); 
+    let day = formatDay(today.getDay());
+    let month = formatMonth(today.getMonth() + 1);
+    let year = today.getFullYear();  
+    const formatDate = `${day}/${month}/${year}`;
+    arr.push(formatDate, category, description, amount);
     instance.addValues(arr);
-}) 
+});
 
 document.addEventListener("DOMContentLoaded", (event) => { 
     instance.reloadContent(); 
+});
 
-})
+function formatMonth(month) {
+        if (month < 10) {
+            month = '0' + month;
+        }  
+        return month;
+    } 
+
+function formatDay(day) {
+    if (day < '10') {
+        day = 0 + day;
+    } 
+    return day;
+} 
 
 /*document.addEventListener("DOMContentLoaded", (event) => {  
     instance.clearLS();   
-})*/
+});*/
