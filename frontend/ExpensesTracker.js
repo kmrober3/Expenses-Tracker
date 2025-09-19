@@ -4,7 +4,8 @@ class ExpensesTracker {
         this.totalBalance = 0;  
         this.currCount = 0; 
         this.ls = localStorage;  
-        this.reloadCount = 0; 
+        this.reloadCount = 0;  
+        this.removeCount = 0;
     }  
 
     addValues(expenses) { 
@@ -42,7 +43,7 @@ class ExpensesTracker {
             // Create checkbox
             let input = document.createElement("input");
             input.type = "checkbox";
-            input.id = description;   
+            input.id = t[2];   
 
             //  Update balance 
             this.totalBalance += Number.parseFloat(t[3]);    
@@ -55,7 +56,12 @@ class ExpensesTracker {
             let lsArray = [];
             lsArray.push(t[0], t[1], t[2], t[3]);
 
-            let tcClone = this.formatedAmount(this.totalBalance); 
+            let tcClone = this.formatedAmount(this.totalBalance);  
+
+            // Event listener for removing expenses
+            document.getElementById("completed").addEventListener("click", (event) => {
+                this.removeExpense(divAE);
+            })
 
             // Build Structure
             date.appendChild(category); 
@@ -119,7 +125,7 @@ class ExpensesTracker {
             // Create checkbox
             let input = document.createElement("input");
             input.type = "checkbox";
-            input.id = description;   
+            input.id = key[2];   
 
             //  Update balance 
             this.totalBalance += Number.parseFloat(key[3]);    
@@ -128,7 +134,12 @@ class ExpensesTracker {
             totalBalanceUSD.style.display = "inline-block";
             totalBalanceUSD.style.marginRight = "10px";  
             
-            let tcClone = this.formatedAmount(this.totalBalance); 
+            let tcClone = this.formatedAmount(this.totalBalance);  
+
+            // Add event listener for removal
+            document.getElementById("completed").addEventListener("click", (event) => {
+                this.removeExpense(divAE);
+            })
 
             let lsArray = [];
             lsArray.push(key[0], key[1], key[2], key[3]); 
@@ -161,8 +172,89 @@ class ExpensesTracker {
         //console.log(this.ls);
     } 
 
-    removeExpense(expense) {
-        //ToDo
+    removeExpense(divAE) {
+        //ToDo    
+        let h1TC = document.getElementById("Total Cost"); 
+        h1TC.innerHTML = "";
+        this.information = this.information.filter(t => { 
+            console.log(t[2]);
+            let cb = document.getElementById(t[2]);  
+            console.log(cb);
+            if (cb && cb.checked) { 
+                console.log("HI");
+                this.ls.setItem(t, "done");
+            } 
+            return !(cb && cb.checked);
+        });   
+        
+        divAE.innerHTML = ""; 
+        let max = this.information.length;
+        let count = 0;
+        
+        this.information.forEach(t => { 
+            // Create list items 
+            let date = document.createElement("li");
+            date.textContent = t[0] + " "; 
+            //date.style.marginRight = "10px";
+
+            let category = document.createElement("li"); 
+            category.textContent = t[1] + " ";    
+            category.style.display = "inline-block"; 
+            category.style.marginRight = "10px";
+
+            let description = document.createElement("li"); 
+            description.textContent = t[2]; 
+            description.style.display = "inline-block"; 
+            description.style.marginRight = "10px"; 
+
+            let amount = document.createElement("li"); 
+            amount.textContent = this.formatedAmount(Number.parseFloat(t[3]));  
+            amount.style.display = "inline-block"; 
+            amount.style.marginRight = "10px";  
+
+            // Create checkbox
+            let input = document.createElement("input");
+            input.type = "checkbox";
+            input.id = description;   
+
+            //  Update balance 
+            this.totalBalance += Number.parseFloat(t[3]);    
+            let totalBalanceUSD = document.createElement("li");
+            totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
+            totalBalanceUSD.style.display = "inline-block";
+            totalBalanceUSD.style.marginRight = "10px";   
+
+            // Create local storage data
+            let lsArray = [];
+            lsArray.push(t[0], t[1], t[2], t[3]);
+
+            let tcClone = this.formatedAmount(this.totalBalance);  
+
+            // Build Structure
+            date.appendChild(category); 
+            date.appendChild(description);
+            date.appendChild(amount);
+            date.appendChild(input);
+
+            divAE.append(date); 
+
+            count++; 
+            
+            // Update local storage
+            this.ls.setItem(JSON.stringify(lsArray), "in progress");    
+            //console.log(this.ls);
+
+            // Add to header when max reached
+            if (count == max && this.removeCount > 0) {  
+                h1TC.innerHTML = "";
+                h1TC.append(tcClone);
+            }
+
+            if(this.removeCount == 0) { 
+                h1TC.append(tcClone); 
+                this.removeCount++;
+            }
+        })
     }
 
     formatedAmount(num) {
