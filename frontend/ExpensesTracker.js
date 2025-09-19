@@ -3,7 +3,7 @@ class ExpensesTracker {
         this.information = []; 
         this.totalBalance = 0;  
         this.currCount = 0; 
-        this.ls = localStorage;
+        this.ls = localStorage; 
     }  
 
     addValues(expenses) { 
@@ -85,7 +85,59 @@ class ExpensesTracker {
                 this.currCount++;
             }
         })
-    }    
+    }     
+
+    reloadContent() { 
+        let divAE = document.getElementById("activeExpenses"); 
+        let h1TC = document.getElementById("Total Cost");
+        divAE.innerHTML = ""; 
+        h1TC.innerHTML = "";   
+        let max = this.information.length;   
+        this.totalBalance = 0; 
+        let count = 0; 
+        for (const key in this.ls) {  
+            //Create list items 
+            let date = document.createElement("li");
+            date.textContent = key[0] + " "; 
+
+            let category = document.createElement("li"); 
+            category.textContent = t[1] + " ";    
+            category.style.display = "inline-block"; 
+            category.style.marginRight = "10px"; 
+
+            let description = document.createElement("li"); 
+            description.textContent = t[2]; 
+            description.style.display = "inline-block"; 
+            description.style.marginRight = "10px";  
+
+            let amount = document.createElement("li"); 
+            amount.textContent = this.formatedAmount(Number.parseFloat(t[2]));  
+            amount.style.display = "inline-block"; 
+            amount.style.marginRight = "10px"; 
+
+            // Create checkbox
+            let input = document.createElement("input");
+            input.type = "checkbox";
+            input.id = description;  
+
+            // Build Structure
+            date.appendChild(category);
+            date.appendChild(amount);
+            date.appendChild(input); 
+
+            divAE.append(date);  
+
+            // Add to header when max reached
+            if (count == max && this.currCount > 0) { 
+                h1TC.append(tcClone);
+            }
+
+            if(this.currCount == 0) { 
+                h1TC.append(tcClone); 
+                this.currCount++;
+            }
+        }
+    }
 
     formatedAmount(num) {
         return new Intl.NumberFormat('en-US', {
@@ -119,4 +171,8 @@ document.getElementById("addExpense").addEventListener("click", (event) => {
     let amount = document.getElementById("amount").value;  
     arr.push(category, description, amount);
     instance.addValues(arr);
+}) 
+
+document.addEventListener("DOMContentLoaded", (event) => {
+
 })
