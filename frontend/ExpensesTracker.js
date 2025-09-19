@@ -2,7 +2,8 @@ class ExpensesTracker {
     constructor () {
         this.information = []; 
         this.totalBalance = 0;  
-        this.currCount = 0;
+        this.currCount = 0; 
+        this.ls = localStorage;
     }  
 
     addValues(expenses) { 
@@ -14,7 +15,8 @@ class ExpensesTracker {
         let max = this.information.length;  
         console.log(max);
         this.totalBalance = 0; 
-        let count = 0;
+        let count = 0; 
+        //this.ls.clear();
         this.information.forEach(t => {  
             // Create list items 
             let today = new Date(); 
@@ -52,7 +54,11 @@ class ExpensesTracker {
             let totalBalanceUSD = document.createElement("li");
             totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
             totalBalanceUSD.style.display = "inline-block";
-            totalBalanceUSD.style.marginRight = "10px";  
+            totalBalanceUSD.style.marginRight = "10px";   
+
+            // Create local storage data
+            let lsArray = [];
+            lsArray.push(formatDate, t[0], t[1], t[2]);
 
             let tcClone = this.formatedAmount(this.totalBalance); 
 
@@ -61,8 +67,13 @@ class ExpensesTracker {
             date.appendChild(amount);
             date.appendChild(input);
 
-            divAE.append(date);   
-            count++;    
+            divAE.append(date); 
+
+            count++; 
+            
+            // Update local storage
+            this.ls.setItem(`[${lsArray}]`, "in progress");    
+            console.log(this.ls);
 
             // Add to header when max reached
             if (count == max && this.currCount > 0) { 
