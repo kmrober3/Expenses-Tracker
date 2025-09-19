@@ -189,7 +189,10 @@ class ExpensesTracker {
         
         divAE.innerHTML = ""; 
         let max = this.information.length;
-        let count = 0;
+        let count = 0; 
+        console.log(this.information);
+        console.log(this.totalBalance); 
+        this.totalBalance = 0;
         
         this.information.forEach(t => { 
             // Create list items 
@@ -218,7 +221,8 @@ class ExpensesTracker {
             input.id = description;   
 
             //  Update balance 
-            this.totalBalance += Number.parseFloat(t[3]);    
+            this.totalBalance += Number.parseFloat(t[3]);   
+            console.log("totalBalance: " + this.totalBalance);  
             let totalBalanceUSD = document.createElement("li");
             totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
             totalBalanceUSD.style.display = "inline-block";
@@ -228,7 +232,8 @@ class ExpensesTracker {
             let lsArray = [];
             lsArray.push(t[0], t[1], t[2], t[3]);
 
-            let tcClone = this.formatedAmount(this.totalBalance);  
+            let tcClone = this.formatedAmount(this.totalBalance);   
+            //console.log(tcClone);
 
             // Build Structure
             date.appendChild(category); 
@@ -244,7 +249,7 @@ class ExpensesTracker {
             this.ls.setItem(JSON.stringify(lsArray), "in progress");    
             //console.log(this.ls);
 
-            // Add to header when max reached
+            // Add Total Value max reached
             if (count == max && this.removeCount > 0) {  
                 h1TC.innerHTML = "";
                 h1TC.append(tcClone);
