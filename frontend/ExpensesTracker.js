@@ -159,6 +159,10 @@ class ExpensesTracker {
             } 
         } 
         //console.log(this.ls);
+    } 
+
+    removeExpense(expense) {
+        //ToDo
     }
 
     formatedAmount(num) {
