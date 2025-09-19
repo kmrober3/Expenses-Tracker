@@ -4,7 +4,7 @@ class ExpensesTracker {
         this.totalBalance = 0;  
         this.currCount = 0; 
         this.ls = localStorage;  
-        this.reloadCount = 0;
+        this.reloadCount = 0; 
     }  
 
     addValues(expenses) { 
@@ -73,7 +73,7 @@ class ExpensesTracker {
             count++; 
             
             // Update local storage
-            this.ls.setItem("in progress", JSON.stringify(lsArray));    
+            this.ls.setItem(JSON.stringify(lsArray), "in progress");    
             console.log(this.ls);
 
             // Add to header when max reached
@@ -96,26 +96,26 @@ class ExpensesTracker {
         let max = this.information.length;   
         this.totalBalance = 0;  
         for (let i = 0; i < this.ls.length; i++) {   
-            let key = this.ls.key(i);
-            let rawValue = this.ls.getItem(key);
-            let values = JSON.parse(rawValue);
+            let rawKey = this.ls.key(i);
+            let key = JSON.parse(rawKey);
+            //let values = JSON.parse(rawValue);
             //Create list items 
             let date = document.createElement("li");
-            date.textContent = values[0] + " ";   
+            date.textContent = key[0] + " ";   
             //console.log("HI: " + this.ls.key(count));
 
             let category = document.createElement("li"); 
-            category.textContent = values[1] + " ";    
+            category.textContent = key[1] + " ";    
             category.style.display = "inline-block"; 
             category.style.marginRight = "10px"; 
 
             let description = document.createElement("li"); 
-            description.textContent = values[2]; 
+            description.textContent = key[2]; 
             description.style.display = "inline-block"; 
             description.style.marginRight = "10px";  
 
             let amount = document.createElement("li"); 
-            amount.textContent = this.formatedAmount(values[3]);  
+            amount.textContent = this.formatedAmount(key[3]);  
             amount.style.display = "inline-block"; 
             amount.style.marginRight = "10px"; 
 
@@ -125,23 +125,30 @@ class ExpensesTracker {
             input.id = description;   
 
             //  Update balance 
-            this.totalBalance += Number.parseFloat(values[3]);    
+            this.totalBalance += Number.parseFloat(key[3]);    
             let totalBalanceUSD = document.createElement("li");
             totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
             totalBalanceUSD.style.display = "inline-block";
             totalBalanceUSD.style.marginRight = "10px";  
             
-            let tcClone = this.formatedAmount(this.totalBalance);
+            let tcClone = this.formatedAmount(this.totalBalance); 
+
+            let lsArray = [];
+            lsArray.push(key[0], key[1], key[2], key[3]); 
+            let rawlsArray = JSON.stringify(lsArray);
+            let actuallsArray = JSON.parse(rawlsArray);
+            
+            this.information.push(actuallsArray);
 
             // Build Structure
             date.appendChild(category);
             date.appendChild(amount);
             date.appendChild(input); 
 
-            divAE.append(date);   
+            divAE.append(date);    
 
             // Add to header when max reached
-            if (count == max && this.reloadCount > 0) { 
+            if (i == max - 1 && this.reloadCount > 0) { 
                 h1TC.textContent = tcClone;
             }
 
@@ -149,7 +156,8 @@ class ExpensesTracker {
                 h1TC.append(tcClone); 
                 this.reloadCount++;
             } 
-        }
+        } 
+        console.log(this.ls);
     }
 
     formatedAmount(num) {
@@ -190,7 +198,8 @@ document.getElementById("addExpense").addEventListener("click", (event) => {
 }) 
 
 document.addEventListener("DOMContentLoaded", (event) => { 
-    instance.reloadContent();
+    instance.reloadContent(); 
+
 })
 
 /*document.addEventListener("DOMContentLoaded", (event) => {  
