@@ -6,6 +6,11 @@ class ExpensesTracker {
         this.ls = localStorage;  
         this.reloadCount = 0;  
         this.removeCount = 0;
+
+        // Add event listener once here
+        document.getElementById("completed").addEventListener("click", (event) => {
+            this.removeExpense(document.getElementById("activeExpenses"));
+        })
     }  
 
     addValues(expenses) { 
@@ -15,15 +20,13 @@ class ExpensesTracker {
         h1TC.innerHTML = "";    
         this.information.push(expenses); 
         let max = this.information.length;  
-        //console.log(this.information);
         this.totalBalance = 0; 
         let count = 0; 
-        //this.ls.clear();
+
         this.information.forEach(t => {  
             // Create list items 
             let date = document.createElement("li");
             date.textContent = t[0] + " "; 
-            //date.style.marginRight = "10px";
 
             let category = document.createElement("li"); 
             category.textContent = t[1] + " ";    
@@ -40,28 +43,14 @@ class ExpensesTracker {
             amount.style.display = "inline-block"; 
             amount.style.marginRight = "10px";  
 
-            // Create checkbox
+            // Use description string for ID
             let input = document.createElement("input");
             input.type = "checkbox";
             input.id = t[2];   
 
-            //  Update balance 
+            // Update balance 
             this.totalBalance += Number.parseFloat(t[3]);    
-            let totalBalanceUSD = document.createElement("li");
-            totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
-            totalBalanceUSD.style.display = "inline-block";
-            totalBalanceUSD.style.marginRight = "10px";   
-
-            // Create local storage data
-            let lsArray = [];
-            lsArray.push(t[0], t[1], t[2], t[3]);
-
             let tcClone = this.formatedAmount(this.totalBalance);  
-
-            // Event listener for removing expenses
-            document.getElementById("completed").addEventListener("click", (event) => {
-                this.removeExpense(divAE);
-            })
 
             // Build Structure
             date.appendChild(category); 
@@ -74,10 +63,8 @@ class ExpensesTracker {
             count++; 
             
             // Update local storage
-            this.ls.setItem(JSON.stringify(lsArray), "in progress");    
-            //console.log(this.ls);
+            this.ls.setItem(JSON.stringify(t), "in progress");    
 
-            // Add to header when max reached
             if (count == max && this.currCount > 0) {  
                 h1TC.innerHTML = "";
                 h1TC.append(tcClone);
@@ -100,11 +87,9 @@ class ExpensesTracker {
         for (let i = 0; i < this.ls.length; i++) {   
             let rawKey = this.ls.key(i);
             let key = JSON.parse(rawKey);
-            //let values = JSON.parse(rawValue);
-            //Create list items 
+
             let date = document.createElement("li");
             date.textContent = key[0] + " ";   
-            //console.log("HI: " + this.ls.key(count));
 
             let category = document.createElement("li"); 
             category.textContent = key[1] + " ";    
@@ -113,7 +98,6 @@ class ExpensesTracker {
 
             let description = document.createElement("li"); 
             description.textContent = key[2];  
-            //console.log(key[2]);
             description.style.display = "inline-block"; 
             description.style.marginRight = "10px";  
 
@@ -122,33 +106,18 @@ class ExpensesTracker {
             amount.style.display = "inline-block"; 
             amount.style.marginRight = "10px"; 
 
-            // Create checkbox
+            // Use description string
             let input = document.createElement("input");
             input.type = "checkbox";
             input.id = key[2];   
 
-            //  Update balance 
             this.totalBalance += Number.parseFloat(key[3]);    
-            let totalBalanceUSD = document.createElement("li");
-            totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
-            totalBalanceUSD.style.display = "inline-block";
-            totalBalanceUSD.style.marginRight = "10px";  
-            
             let tcClone = this.formatedAmount(this.totalBalance);  
-
-            // Add event listener for removal
-            document.getElementById("completed").addEventListener("click", (event) => {
-                this.removeExpense(divAE);
-            })
 
             let lsArray = [];
             lsArray.push(key[0], key[1], key[2], key[3]); 
-            let rawlsArray = JSON.stringify(lsArray);
-            let actuallsArray = JSON.parse(rawlsArray);
-            
-            this.information.push(actuallsArray);
+            this.information.push(lsArray);
 
-            // Build Structure
             date.appendChild(category); 
             date.appendChild(description);
             date.appendChild(amount);
@@ -156,49 +125,40 @@ class ExpensesTracker {
 
             divAE.append(date);    
 
-            // Add to header when max reached
             if (i == max - 1 && this.reloadCount > 0) {  
-                console.log("Why am i here"); 
                 h1TC.innerHTML = "";
                 h1TC.append(tcClone);
             }
 
             if(this.reloadCount == 0) {  
-                console.log("HI: " + tcClone);
                 h1TC.append(tcClone); 
                 this.reloadCount++;
             } 
         } 
-        //console.log(this.ls);
     } 
 
     removeExpense(divAE) {
-        //ToDo    
         let h1TC = document.getElementById("Total Cost"); 
         h1TC.innerHTML = "";
+
         this.information = this.information.filter(t => { 
-            console.log(t[2]);
             let cb = document.getElementById(t[2]);  
-            console.log(cb);
             if (cb && cb.checked) { 
-                console.log("HI");
-                this.ls.setItem(t, "done");
+                // Remove from localStorage completely
+                this.ls.removeItem(JSON.stringify(t));
+                return false;
             } 
-            return !(cb && cb.checked);
+            return true;
         });   
         
         divAE.innerHTML = ""; 
         let max = this.information.length;
         let count = 0; 
-        console.log(this.information);
-        console.log(this.totalBalance); 
         this.totalBalance = 0;
         
         this.information.forEach(t => { 
-            // Create list items 
             let date = document.createElement("li");
             date.textContent = t[0] + " "; 
-            //date.style.marginRight = "10px";
 
             let category = document.createElement("li"); 
             category.textContent = t[1] + " ";    
@@ -215,27 +175,13 @@ class ExpensesTracker {
             amount.style.display = "inline-block"; 
             amount.style.marginRight = "10px";  
 
-            // Create checkbox
             let input = document.createElement("input");
             input.type = "checkbox";
-            input.id = description;   
+            input.id = t[2];   
 
-            //  Update balance 
             this.totalBalance += Number.parseFloat(t[3]);   
-            console.log("totalBalance: " + this.totalBalance);  
-            let totalBalanceUSD = document.createElement("li");
-            totalBalanceUSD.textContent = this.formatedAmount(this.totalBalance); 
-            totalBalanceUSD.style.display = "inline-block";
-            totalBalanceUSD.style.marginRight = "10px";   
-
-            // Create local storage data
-            let lsArray = [];
-            lsArray.push(t[0], t[1], t[2], t[3]);
-
             let tcClone = this.formatedAmount(this.totalBalance);   
-            //console.log(tcClone);
 
-            // Build Structure
             date.appendChild(category); 
             date.appendChild(description);
             date.appendChild(amount);
@@ -245,11 +191,8 @@ class ExpensesTracker {
 
             count++; 
             
-            // Update local storage
-            this.ls.setItem(JSON.stringify(lsArray), "in progress");    
-            //console.log(this.ls);
+            this.ls.setItem(JSON.stringify(t), "in progress");    
 
-            // Add Total Value max reached
             if (count == max && this.removeCount > 0) {  
                 h1TC.innerHTML = "";
                 h1TC.append(tcClone);
@@ -277,8 +220,8 @@ class ExpensesTracker {
     } 
 
     formatDay(day) {
-        if (day < '10') {
-            day = 0 + day;
+        if (day < 10) {
+            day = '0' + day;
         } 
         return day;
     } 
@@ -295,12 +238,13 @@ document.getElementById("addExpense").addEventListener("click", (event) => {
     let category = document.getElementById("category").value;  
     let description = document.getElementById("description").value; 
     let amount = document.getElementById("amount").value;    
-    // Get and format date
+
     let today = new Date(); 
-    let day = formatDay(today.getDay());
-    let month = formatMonth(today.getMonth() + 1);
+    let day = instance.formatDay(today.getDate());
+    let month = instance.formatMonth(today.getMonth() + 1);
     let year = today.getFullYear();  
     const formatDate = `${day}/${month}/${year}`;
+
     arr.push(formatDate, category, description, amount);
     instance.addValues(arr);
 });
@@ -309,20 +253,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
     instance.reloadContent(); 
 });
 
-function formatMonth(month) {
-        if (month < 10) {
-            month = '0' + month;
-        }  
-        return month;
-    } 
 
-function formatDay(day) {
-    if (day < '10') {
-        day = 0 + day;
-    } 
-    return day;
-} 
-
+//Testing purposes
 /*document.addEventListener("DOMContentLoaded", (event) => {  
     instance.clearLS();   
 });*/
