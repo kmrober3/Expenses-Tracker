@@ -51,4 +51,12 @@ form#inputs {
 
 body {
     background-color: blanchedalmond;
+} 
+
+button#addExpense {
+    border-radius: 8px; 
+    padding: 15px;
+    background-color: dodgerblue; 
+    color: white; 
+    border: dodgerblue;
 }
