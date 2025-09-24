@@ -41,7 +41,7 @@ class ExpensesTracker {
             let amount = document.createElement("li"); 
             amount.textContent = this.formatedAmount(Number.parseFloat(t[3]));  
             amount.style.display = "inline-block"; 
-            amount.style.marginRight = "10px";  
+            amount.style.marginRight = "10px";   
 
             // Use description string for ID
             let input = document.createElement("input");
