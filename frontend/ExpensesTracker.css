@@ -5,5 +5,22 @@ header#Topic {
 div#box {
     border: solid silver;
     border-width: 1px; 
-    border-radius: 12px;
+    border-radius: 12px;  
+    position: relative;
+
+} 
+
+div#Total\ Cost {  
+    margin-left: 20px;
+
+} 
+
+h1#First\ Header {
+    margin-left: 20px;
+} 
+
+button#addExpense { 
+    position: absolute;
+    margin-left: 400px;
+    margin-top: -50px;
 }
