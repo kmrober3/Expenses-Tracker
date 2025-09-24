@@ -58,7 +58,9 @@ button#addExpense {
     padding: 15px;
     background-color: dodgerblue; 
     color: white; 
-    border: dodgerblue;
+    border: dodgerblue; 
+    margin-left: 350px; 
+    margin-top: -105px;
 } 
 
 button#completed { 
@@ -66,5 +68,13 @@ button#completed {
     padding: 15px;
     background-color: dodgerblue; 
     color: white; 
-    border: dodgerblue;
+    border: dodgerblue; 
+    margin-left: 600px; 
+    margin-top: -145px; 
+    width: 108px;
+    height: 45px;
+} 
+
+hr.solid {
+    border-top: 1px solid #bbb;
 }
