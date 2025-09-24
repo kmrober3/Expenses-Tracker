@@ -66,7 +66,7 @@ class ExpensesTracker {
             this.ls.setItem(JSON.stringify(t), "in progress");    
 
             if (count == max && this.currCount > 0) {  
-                h1TC.innerHTML = "";
+                h1TC.innerHTML = ""; 
                 h1TC.append(tcClone);
             }
 
