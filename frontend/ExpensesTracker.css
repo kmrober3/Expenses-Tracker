@@ -1,0 +1,9 @@
+header#Topic {
+    text-align: center;
+} 
+
+div#box {
+    border: solid silver;
+    border-width: 1px; 
+    border-radius: 12px;
+}
